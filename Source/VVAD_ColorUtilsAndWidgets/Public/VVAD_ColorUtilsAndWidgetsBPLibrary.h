@@ -3,11 +3,10 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "VVAD_ColorUtilsAndWidgetsBPLibrary.generated.h"
-
 #include "Engine/Texture2D.h"
 #include "Curves/CurveLinearColor.h"
 
+#include "VVAD_ColorUtilsAndWidgetsBPLibrary.generated.h"
 /* 
 *	Function library class.
 *	Each function in it is expected to be static and represents blueprint node that can be called in any blueprint.
@@ -124,35 +123,5 @@ class UVVAD_ColorUtilsAndWidgetsBPLibrary : public UBlueprintFunctionLibrary {
 
 	//CurveLinearColor
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", Category = "Color|Curve"))
-	static UTexture2D* CurveLinearColor_CreateTexture(UObject* WorldContextObject, int32 Width, UCurveLinearColor* Curve, bool bOutputSRGB = true) {
-		if (!Curve || Width <= 0) {
-			return nullptr;
-		}
-		float bMin = 0.0f, bMax = 1.0f;
-		Curve->GetTimeRange(bMin, bMax);
-
-		UTexture2D* Texture = UTexture2D::CreateTransient(Width, 1, PF_B8G8R8A8);
-
-		Texture->MipGenSettings = TMGS_NoMipmaps;
-		Texture->CompressionSettings = TC_Default;
-		Texture->Filter = TF_Bilinear;
-		Texture->AddressX = TA_Clamp;
-		Texture->AddressY = TA_Clamp;
-		Texture->SRGB = bOutputSRGB;
-
-		FTexture2DMipMap& Mip = Texture->GetPlatformData()->Mips[0];
-		void* RawData = Mip.BulkData.Lock(LOCK_READ_WRITE);
-
-		FColor* Pixels = static_cast<FColor*>(RawData);
-
-		float step = (bMax - bMin) / Width;
-		for (int i = 0; i < Width; i++){
-			Curve get color at (step*i)
-			//draw pixel
-		}
-		Mip.BulkData.Unlock();
-		Texture->UpdateResource();
-
-		return Texture;
-	}
+	static UTexture2D* CurveLinearColor_CreateTexture(UObject* WorldContextObject, int32 Width, UCurveLinearColor* Curve, bool bOutputSRGB = true);
 };
