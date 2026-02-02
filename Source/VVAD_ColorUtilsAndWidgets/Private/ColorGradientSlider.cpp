@@ -45,32 +45,35 @@ UColorGradientSlider::UColorGradientSlider(const FObjectInitializer& ObjectIniti
 		ApplyMatBrush(DisabledThumb, FVector2D(8, 60), ThumbMat);
 	}
 
+	OnValueChanged.AddUniqueDynamic(this, &UColorGradientSlider::HandleSliderValueChanged);
 }
 
 FLinearColor UColorGradientSlider::GetColorValue() const {
-	return CurrentValue;
+	return CurrentValueHSV.HSVToLinearRGB();
 }
 
 void UColorGradientSlider::SetColorValue(const FLinearColor& NewValue) {
-	CurrentValue = NewValue;
 	switch (SliderType) {
 	case EColorSliderType::Hue:
-		Value = NewValue.LinearRGBToHSV().R / 360;
+		if (NewValue.LinearRGBToHSV().G == 0 || NewValue.LinearRGBToHSV().B == 0) break;
+		Super::SetValue(NewValue.LinearRGBToHSV().R / 360);
 		break;
 	case EColorSliderType::Saturation:
-		Value = NewValue.LinearRGBToHSV().G;
+		if (NewValue.LinearRGBToHSV().B == 0) break;
+		Super::SetValue(NewValue.LinearRGBToHSV().G);
 		break;
 	case EColorSliderType::Value:
-		Value = NewValue.LinearRGBToHSV().B;
+		if (NewValue.LinearRGBToHSV().G == 0) break;
+		Super::SetValue(NewValue.LinearRGBToHSV().B);
 		break;
 	case EColorSliderType::Red:
-		Value = NewValue.R;
+		Super::SetValue(NewValue.R);
 		break;
 	case EColorSliderType::Green:
-		Value = NewValue.G;
+		Super::SetValue(NewValue.G);
 		break;
 	case EColorSliderType::Blue:
-		Value = NewValue.B;
+		Super::SetValue(NewValue.B);
 		break;
 	case EColorSliderType::Custom:
 		break;
@@ -78,6 +81,50 @@ void UColorGradientSlider::SetColorValue(const FLinearColor& NewValue) {
 		break;
 	}
 
+	FLinearColor v = NewValue.LinearRGBToHSV();
+	if (v.LinearRGBToHSV().G != 0 && v.LinearRGBToHSV().B != 0) {
+		CurrentValueHSV.R = v.R;
+	}
+	CurrentValueHSV.G = v.G;
+	CurrentValueHSV.B = v.B;
+
+
+	UpdateMatInst();
+}
+
+FLinearColor UColorGradientSlider::GetColorValueHSV() const {
+	return CurrentValueHSV;
+}
+
+void UColorGradientSlider::SetColorValueHSV(const FLinearColor& NewValueHSV) {
+	switch (SliderType) {
+	case EColorSliderType::Hue:
+		Super::SetValue(NewValueHSV.R / 360);
+		break;
+	case EColorSliderType::Saturation:
+		Super::SetValue(NewValueHSV.G);
+		break;
+	case EColorSliderType::Value:
+		Super::SetValue(NewValueHSV.B);
+		break;
+	case EColorSliderType::Red:
+		Super::SetValue(NewValueHSV.HSVToLinearRGB().R);
+		break;
+	case EColorSliderType::Green:
+		Super::SetValue(NewValueHSV.HSVToLinearRGB().G);
+		break;
+	case EColorSliderType::Blue:
+		Super::SetValue(NewValueHSV.HSVToLinearRGB().B);
+		break;
+	case EColorSliderType::Custom:
+		break;
+	default:
+		break;
+	}
+
+	CurrentValueHSV = NewValueHSV;
+
+	UpdateMatInst();
 }
 
 void UColorGradientSlider::SynchronizeProperties() {
@@ -96,6 +143,43 @@ void UColorGradientSlider::PostEditChangeProperty(FPropertyChangedEvent& Propert
 	}
 }
 #endif
+
+void UColorGradientSlider::HandleSliderValueChanged(float InValue) {
+	FLinearColor NewValue = CurrentValueHSV;
+	switch (SliderType) {
+	case EColorSliderType::Hue:
+		NewValue.R = GetValue() * 360;
+		break;
+	case EColorSliderType::Saturation:
+		NewValue.G = GetValue();
+		break;
+	case EColorSliderType::Value:
+		NewValue.B = GetValue();
+		break;
+	case EColorSliderType::Red:
+		NewValue = NewValue.HSVToLinearRGB();
+		NewValue.R = GetValue();
+		NewValue = NewValue.LinearRGBToHSV();
+
+		break;
+	case EColorSliderType::Green:
+		NewValue = NewValue.HSVToLinearRGB();
+		NewValue.G = GetValue();
+		NewValue = NewValue.LinearRGBToHSV();
+		break;
+	case EColorSliderType::Blue:
+		NewValue = NewValue.HSVToLinearRGB();
+		NewValue.B = GetValue();
+		NewValue = NewValue.LinearRGBToHSV();
+		break;
+	case EColorSliderType::Custom:
+		break;
+	default:
+		break;
+	}
+	CurrentValueHSV = NewValue;
+}
+
 
 void UColorGradientSlider::UpdateWidgetDetails() {
 	WidgetStyle.BarThickness = Thickness;
@@ -133,11 +217,14 @@ void UColorGradientSlider::UpdateWidgetDetails() {
 		break;
 	}
 
+	MatInst = UMaterialInstanceDynamic::Create(mat, this);
+
 	if (mat) {
-		ApplyMatBrush(WidgetStyle.NormalBarImage, BarSize, mat);
-		ApplyMatBrush(WidgetStyle.HoveredBarImage, BarSize, mat);
-		ApplyMatBrush(WidgetStyle.DisabledBarImage, BarSize, mat);
+		ApplyMatBrush(WidgetStyle.NormalBarImage, BarSize, MatInst);
+		ApplyMatBrush(WidgetStyle.HoveredBarImage, BarSize, MatInst);
+		ApplyMatBrush(WidgetStyle.DisabledBarImage, BarSize, MatInst);
 	}
+	UpdateMatInst();
 	
 	if (bFixateThumbToThicknass) {
 		NormalThumb.SetImageSize(FVector2D(NormalThumb.GetImageSize().X, Thickness + ThumbThicknessOffset));
@@ -154,6 +241,16 @@ void UColorGradientSlider::ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Si
 	Brush.DrawAs = ESlateBrushDrawType::Image;
 	Brush.ImageSize = Size;
 	Brush.TintColor = FSlateColor(FLinearColor::White);
+}
+
+void UColorGradientSlider::UpdateMatInst() {
+	MatInst->SetScalarParameterValue(TEXT("Hue"), CurrentValueHSV.R / 360.f);
+	MatInst->SetScalarParameterValue(TEXT("Saturation"), CurrentValueHSV.G);
+	MatInst->SetScalarParameterValue(TEXT("Value"), CurrentValueHSV.B);
+
+	MatInst->SetScalarParameterValue(TEXT("R"), CurrentValueHSV.HSVToLinearRGB().R);
+	MatInst->SetScalarParameterValue(TEXT("G"), CurrentValueHSV.HSVToLinearRGB().G);
+	MatInst->SetScalarParameterValue(TEXT("B"), CurrentValueHSV.HSVToLinearRGB().B);
 }
 
 #if WITH_EDITOR

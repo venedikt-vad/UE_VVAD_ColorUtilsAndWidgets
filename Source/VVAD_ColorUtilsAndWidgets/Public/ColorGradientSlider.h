@@ -52,10 +52,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance|Thumb")
 	FSlateBrush DisabledThumb;
 
-	//Make blueprintable
+	UFUNCTION(BlueprintCallable)
 	FLinearColor GetColorValue() const;
+	UFUNCTION(BlueprintCallable)
 	void SetColorValue(const FLinearColor& NewValue);
 
+	UFUNCTION(BlueprintCallable)
+	FLinearColor GetColorValueHSV() const;
+	UFUNCTION(BlueprintCallable)
+	void SetColorValueHSV(const FLinearColor& NewValueHSV);
+
+	//virtual override function for value update
+	
 	//Blueprint event for update of Color FColor ValueUpdated(); //Should be called each time know is tweaked
 	
 
@@ -65,16 +73,30 @@ protected:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
+	UFUNCTION()
+	void HandleSliderValueChanged(float InValue);
+
 private:
+	UPROPERTY(Transient)
 	UMaterialInterface* HueMat = nullptr;
+	UPROPERTY(Transient)
 	UMaterialInterface* SatMat = nullptr;
+	UPROPERTY(Transient)
 	UMaterialInterface* ValMat = nullptr;
+	UPROPERTY(Transient)
 	UMaterialInterface* RedMat = nullptr;
+	UPROPERTY(Transient)
 	UMaterialInterface* GreenMat = nullptr;
+	UPROPERTY(Transient)
 	UMaterialInterface* BlueMat = nullptr;
 
-	FLinearColor CurrentValue;
+	UPROPERTY(Transient)
+	FLinearColor CurrentValueHSV = FLinearColor(1,0,0,1);
+	UPROPERTY(Transient)
+	UMaterialInstanceDynamic* MatInst = nullptr;
 
 	void UpdateWidgetDetails();
 	void ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat);
+
+	void UpdateMatInst();
 };

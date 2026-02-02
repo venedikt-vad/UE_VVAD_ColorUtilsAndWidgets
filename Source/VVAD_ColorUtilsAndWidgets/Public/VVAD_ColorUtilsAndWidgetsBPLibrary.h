@@ -82,21 +82,23 @@ struct FColorXYZ {
 	FColorXYZ(FVector value) :X(value.X), Y(value.Y), Z(value.Z) {};
 };
 
-USTRUCT(BlueprintType)
-struct FColorHSV {
-	GENERATED_BODY()
-	UPROPERTY(BlueprintReadWrite)
-	float H;
-	UPROPERTY(BlueprintReadWrite)
-	float S;
-	UPROPERTY(BlueprintReadWrite)
-	float V;
 
-	FColorHSV() = default;
-	FColorHSV(float H, float S, float V) :H(H), S(S), V(V) {};
-	FColorHSV(FVector value) :H(value.X), S(value.Y), V(value.Z) {};
-	FColorHSV(FLinearColor HSV_Linear) :H(HSV_Linear.R), S(HSV_Linear.G), V(HSV_Linear.B) {}; //TODO: Need to test this one
-};
+//Unused
+//USTRUCT(BlueprintType)
+//struct FColorHSV {
+//	GENERATED_BODY()
+//	UPROPERTY(BlueprintReadWrite)
+//	float H;
+//	UPROPERTY(BlueprintReadWrite)
+//	float S;
+//	UPROPERTY(BlueprintReadWrite)
+//	float V;
+//
+//	FColorHSV() = default;
+//	FColorHSV(float H, float S, float V) :H(H), S(S), V(V) {};
+//	FColorHSV(FVector value) :H(value.X), S(value.Y), V(value.Z) {};
+//	FColorHSV(FLinearColor HSV_Linear) :H(HSV_Linear.R), S(HSV_Linear.G), V(HSV_Linear.B) {}; //TODO: Need to test this one
+//};
 
 UCLASS()
 class UVVAD_ColorUtilsAndWidgetsBPLibrary : public UBlueprintFunctionLibrary {
