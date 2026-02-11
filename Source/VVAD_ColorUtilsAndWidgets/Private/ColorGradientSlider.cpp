@@ -178,6 +178,8 @@ void UColorGradientSlider::HandleSliderValueChanged(float InValue) {
 		break;
 	}
 	CurrentValueHSV = NewValue;
+
+	OnColorChanged_HSV.Broadcast(CurrentValueHSV);
 }
 
 

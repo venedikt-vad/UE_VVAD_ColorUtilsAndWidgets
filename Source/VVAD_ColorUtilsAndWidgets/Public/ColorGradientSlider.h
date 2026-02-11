@@ -22,6 +22,7 @@ enum class EColorSliderType : uint8
 	Custom     UMETA(DisplayName = "Custom"),
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSliderColorChangedBP, FLinearColor, color);
 
 UCLASS(BlueprintType, Blueprintable, meta = (DisplayName = "Color Gradient Slider"), HideCategories = (Style))
 class VVAD_COLORUTILSANDWIDGETS_API UColorGradientSlider : public USlider{
@@ -62,10 +63,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetColorValueHSV(const FLinearColor& NewValueHSV);
 
-	//virtual override function for value update
-	
-	//Blueprint event for update of Color FColor ValueUpdated(); //Should be called each time know is tweaked
-	
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnSliderColorChangedBP OnColorChanged_HSV;
 
 protected:
 	virtual void SynchronizeProperties() override;
