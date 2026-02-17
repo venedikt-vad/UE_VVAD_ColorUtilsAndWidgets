@@ -1,7 +1,9 @@
-#include "ColorSquare.h"
+#include "ColorCircle.h"
 #include "SColorSquare.h"
 
-UColorSquare::UColorSquare(const FObjectInitializer& ObjectInitializer) {
+UColorCircle::UColorCircle(const FObjectInitializer& ObjectInitializer) {
+	//TODO Circle Mat
+
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> SV_MatFinder(
 		TEXT("Material'/VVAD_ColorUtilsAndWidgets/Materials/HSV/M_UI_SVSquare.M_UI_SVSquare'"));
 	if (SV_MatFinder.Succeeded() && SV_MatFinder.Object) {
@@ -29,28 +31,19 @@ UColorSquare::UColorSquare(const FObjectInitializer& ObjectInitializer) {
 }
 
 
-TSharedRef<SWidget> UColorSquare::RebuildWidget() {
+TSharedRef<SWidget> UColorCircle::RebuildWidget() {
 	MyXYSquare = SNew(SColorSquare)
-		.XY(TAttribute<FVector2D>::Create(TAttribute<FVector2D>::FGetter::CreateUObject(this, &UColorSquare::GetXY)))
+		.XY(TAttribute<FVector2D>::Create(TAttribute<FVector2D>::FGetter::CreateUObject(this, &UColorCircle::GetXY)))
 		.OnXYChanged(FOnXYChangedNative::CreateLambda([this](FVector2D XY) {
 		
-			CurrentPos = XY;
-		
+			CurrentPos = ClampToCircle(XY);
+
 			OnXYChanged.Broadcast(CurrentPos);
 		
 			FLinearColor NewColor = CurrentValueHSV;
-			switch (SelectorType) {
-			case EColorSquareSelectorType::SVSquare:
-				NewColor.G = FMath::Pow(CurrentPos.X, 0.5f);  //0.5 Power in material TODO: Make dynamic
-				NewColor.B = FMath::Pow(CurrentPos.Y, 2.f);  //2.0 Power in material TODO: Make dynamic
-				break;
-			case EColorSquareSelectorType::HSSquare:
-				NewColor.R = CurrentPos.X * 360.f; 
-				NewColor.G = FMath::Pow(1 - CurrentPos.Y, .5f);  //0.5 Power in material TODO: Make dynamic
-				break;
-			default:
-				break;
-			}
+			
+			//TODO: Update Color
+
 			CurrentValueHSV = NewColor;
 			
 			OnColorChanged.Broadcast(NewColor);
@@ -60,24 +53,15 @@ TSharedRef<SWidget> UColorSquare::RebuildWidget() {
 	return MyXYSquare.ToSharedRef();
 }
 
-void UColorSquare::ReleaseSlateResources(bool bReleaseChildren) {
+void UColorCircle::ReleaseSlateResources(bool bReleaseChildren) {
 	Super::ReleaseSlateResources(bReleaseChildren);
 	MyXYSquare.Reset();
 }
 
 
 
-void UColorSquare::EnsureMID() {
-	switch (SelectorType) {
-	case EColorSquareSelectorType::SVSquare:
-		BackgroundMaterial = SV_Mat;
-		break;
-	case EColorSquareSelectorType::HSSquare:
-		BackgroundMaterial = HS_Mat;
-		break;
-	default:
-		break;
-	}
+void UColorCircle::EnsureMID() {
+	BackgroundMaterial = SV_Mat;
 
 	if (!BackgroundMaterial) { BackgroundMID = nullptr; return; }
 
@@ -90,7 +74,7 @@ void UColorSquare::EnsureMID() {
 	}
 }
 
-void UColorSquare::UpdateMID() {
+void UColorCircle::UpdateMID() {
 	EnsureMID();
 	if (BackgroundMID) {
 		BackgroundMID->SetScalarParameterValue(TEXT("Hue"), CurrentValueHSV.R / 360.f);
@@ -108,22 +92,31 @@ void UColorSquare::UpdateMID() {
 	}
 }
 
-void UColorSquare::SynchronizeProperties() {
+FVector2D UColorCircle::ClampToCircle(FVector2D in) {
+	const FVector2D half = FVector2D(.5, .5);
+
+	float len = (in - half).Size();
+	if (len <= .5f) return in;
+
+	len = .5f;
+	FVector2D n = (in - half).GetSafeNormal();
+	return (n * len) + half;
+}
+
+void UColorCircle::SynchronizeProperties() {
 	Super::SynchronizeProperties();
 	UpdateMID();
 }
 
-void UColorSquare::SetXY(FVector2D newValue) {
-	CurrentPos.X = FMath::Clamp(newValue.X, 0.f, 1.f);
-	CurrentPos.Y = FMath::Clamp(newValue.Y, 0.f, 1.f);
+void UColorCircle::SetXY(FVector2D newValue) {
+	CurrentPos = ClampToCircle(newValue);
 
 	if (MyXYSquare.IsValid()) {
 		MyXYSquare->Invalidate(EInvalidateWidget::Paint);
 	}
-
 }
 
-void UColorSquare::SetColor(FLinearColor NewColor) {
+void UColorCircle::SetColor(FLinearColor NewColor) {
 	FLinearColor colNew = NewColor.LinearRGBToHSV();
 	if ((colNew.G == 0 || colNew.B == 0) && colNew.R == 0) {
 		colNew.R = CurrentValueHSV.R;
@@ -131,33 +124,25 @@ void UColorSquare::SetColor(FLinearColor NewColor) {
 	SetColorHSV(colNew);
 }
 
-void UColorSquare::SetColorHSV(FLinearColor NewColorHSV) {
-	switch (SelectorType) {
-	case EColorSquareSelectorType::SVSquare:
-		NewColorHSV.G = FMath::Pow(NewColorHSV.G, 1.f / 0.5f);
-		NewColorHSV.B = FMath::Pow(NewColorHSV.B, 1.f / 2.f);
-		SetXY(FVector2D(NewColorHSV.G, NewColorHSV.B));
-		break;
-	case EColorSquareSelectorType::HSSquare:
-		SetXY(FVector2D(NewColorHSV.R/360, 1 - FMath::Pow(NewColorHSV.G, 1.f / .5f)));
-		break;
-	default:
-		break;
-	}
+void UColorCircle::SetColorHSV(FLinearColor NewColorHSV) {
+	
+	//TODO Color calculation
+	//TODO SetXY
+
 	CurrentValueHSV = NewColorHSV;
 
 	UpdateMID();
 }
 
-FLinearColor UColorSquare::GetColorHSV() {
+FLinearColor UColorCircle::GetColorHSV() {
 	return CurrentValueHSV;
 }
 
-FLinearColor UColorSquare::GetColor() {
+FLinearColor UColorCircle::GetColor() {
 	return GetColorHSV().HSVToLinearRGB();
 }
 
-void UColorSquare::ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint) {
+void UColorCircle::ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint) {
 	Brush.SetResourceObject(Mat);
 	Brush.DrawAs = ESlateBrushDrawType::Image;
 	Brush.ImageSize = Size;

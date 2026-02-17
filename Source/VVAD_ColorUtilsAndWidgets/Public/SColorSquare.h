@@ -57,7 +57,8 @@ public:
 				OutDrawElements, LayerId + 1,
 				AllottedGeometry.ToPaintGeometry(KnobTopLeft, KnobSize),
 				KnobBrush, Effects,
-				InWidgetStyle.GetColorAndOpacityTint()
+				KnobBrush->GetTint(InWidgetStyle)
+				//InWidgetStyle.GetColorAndOpacityTint()
 			);
 		}
 
