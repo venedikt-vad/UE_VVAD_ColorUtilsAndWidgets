@@ -20,6 +20,7 @@ public:
 
 	void SetBackgroundBrush(const FSlateBrush* InBrush) { BackgroundBrush = InBrush; }
 	void SetKnobBrush(const FSlateBrush* InBrush) { KnobBrush = InBrush; }
+	void SetIsCircle(bool IsCircle) { bIsCircle = IsCircle; }
 
 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
 		const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements,
@@ -100,10 +101,28 @@ private:
 		const FVector2D Local = MyGeometry.AbsoluteToLocal(E.GetScreenSpacePosition());
 		const FVector2D Size = MyGeometry.GetLocalSize();
 
-		const float X = (Size.X > 0.f) ? FMath::Clamp(Local.X / Size.X, 0.f, 1.f) : 0.f;
-		const float Y = (Size.Y > 0.f) ? FMath::Clamp(1.f - (Local.Y / Size.Y), 0.f, 1.f) : 0.f;
+		FVector2D newXY;
 
-		OnXYChanged.ExecuteIfBound(FVector2D(X, Y));
+		if (bIsCircle) {
+			newXY = ClampToCircle(FVector2D(Local.X / Size.X, 1.f - (Local.Y / Size.Y)));
+		} else {
+			const float X = (Size.X > 0.f) ? FMath::Clamp(Local.X / Size.X, 0.f, 1.f) : 0.f;
+			const float Y = (Size.Y > 0.f) ? FMath::Clamp(1.f - (Local.Y / Size.Y), 0.f, 1.f) : 0.f;
+			newXY = FVector2D(X, Y);
+		}
+
+		OnXYChanged.ExecuteIfBound(newXY);
+	}
+
+	FVector2D ClampToCircle(FVector2D in) {
+		const FVector2D half = FVector2D(.5, .5);
+
+		float len = (in - half).Size();
+		if (len <= .5f) return in;
+
+		len = .5f;
+		FVector2D n = (in - half).GetSafeNormal();
+		return (n * len) + half;
 	}
 
 	TAttribute<FVector2D> XYAttr;
@@ -111,6 +130,8 @@ private:
 
 	const FSlateBrush* BackgroundBrush = nullptr;
 	const FSlateBrush* KnobBrush = nullptr;
+
+	bool bIsCircle = false;
 
 	bool bDragging = false;
 };

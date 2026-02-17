@@ -132,6 +132,8 @@ void UColorSquare::SetColor(FLinearColor NewColor) {
 }
 
 void UColorSquare::SetColorHSV(FLinearColor NewColorHSV) {
+	CurrentValueHSV = NewColorHSV;
+
 	switch (SelectorType) {
 	case EColorSquareSelectorType::SVSquare:
 		NewColorHSV.G = FMath::Pow(NewColorHSV.G, 1.f / 0.5f);
@@ -144,7 +146,6 @@ void UColorSquare::SetColorHSV(FLinearColor NewColorHSV) {
 	default:
 		break;
 	}
-	CurrentValueHSV = NewColorHSV;
 
 	UpdateMID();
 }

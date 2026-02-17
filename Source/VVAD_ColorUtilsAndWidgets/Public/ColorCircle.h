@@ -16,8 +16,6 @@ class VVAD_COLORUTILSANDWIDGETS_API UColorCircle : public UWidget {
 public:
 	UColorCircle(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Appearance")
-	UMaterialInterface* BackgroundMaterial = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Appearance|Knob|Light")
 	FSlateBrush KnobBrush;
@@ -58,10 +56,11 @@ private:
 	UMaterialInstanceDynamic* BackgroundMID = nullptr;
 	FSlateBrush BackgroundBrush;
 	TSharedPtr<class SColorSquare> MyXYSquare;
-	void EnsureMID();
 
+	void EnsureMID();
 	void UpdateMID();
 
+	//TODO Move to WidgetHelperFunctions.h
 	void ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint = FLinearColor::White);
 
 	FVector2D ClampToCircle(FVector2D in);
@@ -73,4 +72,7 @@ private:
 	UMaterialInterface* SV_Mat = nullptr;
 	UPROPERTY(Transient)
 	UMaterialInterface* HS_Mat = nullptr;
+
+	UPROPERTY(Transient)
+	UMaterialInterface* BackgroundMaterial = nullptr;
 };

@@ -2,15 +2,8 @@
 #include "SColorSquare.h"
 
 UColorCircle::UColorCircle(const FObjectInitializer& ObjectInitializer) {
-	//TODO Circle Mat
-
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> SV_MatFinder(
-		TEXT("Material'/VVAD_ColorUtilsAndWidgets/Materials/HSV/M_UI_SVSquare.M_UI_SVSquare'"));
-	if (SV_MatFinder.Succeeded() && SV_MatFinder.Object) {
-		SV_Mat = SV_MatFinder.Object;
-	}
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> HS_MatFinder(
-		TEXT("Material'/VVAD_ColorUtilsAndWidgets/Materials/HSV/M_UI_HSSquare.M_UI_HSSquare'"));
+		TEXT("Material'/VVAD_ColorUtilsAndWidgets/Materials/HSV/M_UI_HSCircle.M_UI_HSCircle'"));
 	if (HS_MatFinder.Succeeded() && HS_MatFinder.Object) {
 		HS_Mat = HS_MatFinder.Object;
 	}
@@ -42,7 +35,14 @@ TSharedRef<SWidget> UColorCircle::RebuildWidget() {
 		
 			FLinearColor NewColor = CurrentValueHSV;
 			
-			//TODO: Update Color
+			{
+				const FVector2D Center(0.5f, 0.5f);
+				const FVector2D OffsetPos = CurrentPos - Center;
+				NewColor.R = - FMath::RadiansToDegrees(FMath::Atan2(OffsetPos.Y, OffsetPos.X));
+				NewColor.R = FMath::Fmod(NewColor.R + 360.0f, 360.0f);
+
+				NewColor.G = FMath::Clamp(OffsetPos.Size() * 2.0f, 0.0f, 1.0f);
+			}
 
 			CurrentValueHSV = NewColor;
 			
@@ -59,9 +59,8 @@ void UColorCircle::ReleaseSlateResources(bool bReleaseChildren) {
 }
 
 
-
 void UColorCircle::EnsureMID() {
-	BackgroundMaterial = SV_Mat;
+	BackgroundMaterial = HS_Mat;
 
 	if (!BackgroundMaterial) { BackgroundMID = nullptr; return; }
 
@@ -82,6 +81,7 @@ void UColorCircle::UpdateMID() {
 		BackgroundMID->SetScalarParameterValue(TEXT("Value"), CurrentValueHSV.B);
 	}
 	if (MyXYSquare.IsValid()) {
+		MyXYSquare->SetIsCircle(true);
 		MyXYSquare->SetBackgroundBrush(BackgroundMID ? &BackgroundBrush : nullptr);
 		if (CurrentValueHSV.B > 0.5 && bUseDarkKnobOnLightSurface) {
 			MyXYSquare->SetKnobBrush(&DarkKnobBrush);
