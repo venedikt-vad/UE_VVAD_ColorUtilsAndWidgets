@@ -125,11 +125,12 @@ void UColorCircle::SetColor(FLinearColor NewColor) {
 }
 
 void UColorCircle::SetColorHSV(FLinearColor NewColorHSV) {
-	
-	//TODO Color calculation
-	//TODO SetXY
-
 	CurrentValueHSV = NewColorHSV;
+
+	FVector2D target = FVector2D(NewColorHSV.G / 2.f, 0);
+	target = target.GetRotated(-NewColorHSV.R);
+	target += FVector2D(.5f, .5f);
+	SetXY(target);
 
 	UpdateMID();
 }
