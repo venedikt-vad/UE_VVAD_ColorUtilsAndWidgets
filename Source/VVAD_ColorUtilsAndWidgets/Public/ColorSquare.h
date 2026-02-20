@@ -25,8 +25,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance")
 	EColorSquareSelectorType SelectorType = EColorSquareSelectorType::SVSquare;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Appearance")
-	UMaterialInterface* BackgroundMaterial = nullptr;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Appearance|Knob|Light")
@@ -88,6 +86,8 @@ private:
 	UPROPERTY(Transient)
 	FLinearColor CurrentValueHSV = FLinearColor(1, 0, 0, 1);
 
+	UPROPERTY(Transient)
+	UMaterialInterface* BackgroundMaterial = nullptr;
 	UPROPERTY(Transient)
 	UMaterialInterface* SV_Mat = nullptr;
 	UPROPERTY(Transient)
