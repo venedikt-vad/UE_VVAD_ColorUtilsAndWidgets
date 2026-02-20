@@ -84,7 +84,7 @@ private:
 	void ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint = FLinearColor::White);
 
 	UPROPERTY(Transient)
-	FLinearColor CurrentValueHSV = FLinearColor(1, 0, 0, 1);
+	FLinearColor CurrentValueHSV = FLinearColor(0, 1, 1, 1);
 
 	UPROPERTY(Transient)
 	UMaterialInterface* BackgroundMaterial = nullptr;

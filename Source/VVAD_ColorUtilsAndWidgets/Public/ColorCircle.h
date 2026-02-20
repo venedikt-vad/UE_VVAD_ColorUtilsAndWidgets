@@ -16,6 +16,8 @@ class VVAD_COLORUTILSANDWIDGETS_API UColorCircle : public UWidget {
 public:
 	UColorCircle(const FObjectInitializer& ObjectInitializer);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance", meta = (ClampMin = "0.0", ClampMax = "360.0", UIMin = "0.0", UIMax = "360.0", Units = "Degrees"))
+	float HueOffset = 270;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Appearance|Knob|Light")
 	FSlateBrush KnobBrush;
@@ -66,7 +68,7 @@ private:
 	FVector2D ClampToCircle(FVector2D in);
 
 	UPROPERTY(Transient)
-	FLinearColor CurrentValueHSV = FLinearColor(1, 0, 0, 1);
+	FLinearColor CurrentValueHSV = FLinearColor(0, 1, 1, 1);
 
 	UPROPERTY(Transient)
 	UMaterialInterface* SV_Mat = nullptr;

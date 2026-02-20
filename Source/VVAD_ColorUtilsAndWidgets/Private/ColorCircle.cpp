@@ -38,7 +38,7 @@ TSharedRef<SWidget> UColorCircle::RebuildWidget() {
 			{
 				const FVector2D Center(0.5f, 0.5f);
 				const FVector2D OffsetPos = CurrentPos - Center;
-				NewColor.R = - FMath::RadiansToDegrees(FMath::Atan2(OffsetPos.Y, OffsetPos.X));
+				NewColor.R = 360.0f -HueOffset -FMath::RadiansToDegrees(FMath::Atan2(OffsetPos.Y, OffsetPos.X));
 				NewColor.R = FMath::Fmod(NewColor.R + 360.0f, 360.0f);
 
 				NewColor.G = FMath::Clamp(OffsetPos.Size() * 2.0f, 0.0f, 1.0f);
@@ -79,6 +79,7 @@ void UColorCircle::UpdateMID() {
 		BackgroundMID->SetScalarParameterValue(TEXT("Hue"), CurrentValueHSV.R / 360.f);
 		BackgroundMID->SetScalarParameterValue(TEXT("Saturation"), CurrentValueHSV.G);
 		BackgroundMID->SetScalarParameterValue(TEXT("Value"), CurrentValueHSV.B);
+		BackgroundMID->SetScalarParameterValue(TEXT("HueOffset"), -HueOffset / 360.f);
 	}
 	if (MyXYSquare.IsValid()) {
 		MyXYSquare->SetIsCircle(true);
@@ -128,7 +129,7 @@ void UColorCircle::SetColorHSV(FLinearColor NewColorHSV) {
 	CurrentValueHSV = NewColorHSV;
 
 	FVector2D target = FVector2D(NewColorHSV.G / 2.f, 0);
-	target = target.GetRotated(-NewColorHSV.R);
+	target = target.GetRotated(-NewColorHSV.R - HueOffset);
 	target += FVector2D(.5f, .5f);
 	SetXY(target);
 

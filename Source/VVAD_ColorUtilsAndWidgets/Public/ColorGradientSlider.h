@@ -90,7 +90,7 @@ private:
 	UMaterialInterface* BlueMat = nullptr;
 
 	UPROPERTY(Transient)
-	FLinearColor CurrentValueHSV = FLinearColor(1,0,0,1);
+	FLinearColor CurrentValueHSV = FLinearColor(0, 1, 1, 1);
 	UPROPERTY(Transient)
 	UMaterialInstanceDynamic* MatInst = nullptr;
 
