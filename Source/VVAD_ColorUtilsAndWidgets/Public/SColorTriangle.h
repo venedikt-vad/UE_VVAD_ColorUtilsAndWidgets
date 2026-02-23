@@ -4,23 +4,29 @@
 #include "Widgets/SLeafWidget.h"
 #include "Styling/SlateBrush.h"
 
-DECLARE_DELEGATE_OneParam(FOnXYChangedNative, FVector2D /*XY*/);
+DECLARE_DELEGATE_OneParam(FOnTriangleXYChangedNative, FVector2D /*XY*/);
+DECLARE_DELEGATE_OneParam(FOnRingChangedNative, float /*angle*/);
 
 class SColorTriangle : public SLeafWidget {
 public:
 	SLATE_BEGIN_ARGS(SColorTriangle) {}
 		SLATE_ATTRIBUTE(FVector2D, XY)
-		SLATE_EVENT(FOnXYChangedNative, OnXYChanged)
+		SLATE_ATTRIBUTE(float, RingValue)
+		SLATE_EVENT(FOnTriangleXYChangedNative, OnXYChanged)
+		SLATE_EVENT(FOnRingChangedNative, OnRingChanged)
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs) {
 		XYAttr = InArgs._XY;
+		RingValue = InArgs._RingValue;
 		OnXYChanged = InArgs._OnXYChanged;
+		OnRingChanged = InArgs._OnRingChanged;
 	}
 
 	void SetBackgroundBrush(const FSlateBrush* InBrush) { BackgroundBrush = InBrush; }
 	void SetKnobBrush(const FSlateBrush* InBrush) { KnobBrush = InBrush; }
-	void SetIsCircle(bool IsCircle) { bIsCircle = IsCircle; }
+	void SetRotateRingKnob(bool RotateRingKnob) { bRotateRingKnob = RotateRingKnob; }
+	void SetRadius(float radius) { RingRadius = radius; }
 
 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
 		const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements,
@@ -63,6 +69,46 @@ public:
 			);
 		}
 
+		// RingKnob
+		if (RingKnobBrush) {
+			const FVector2D Size = AllottedGeometry.GetLocalSize();
+			const FVector2D Center = Size * 0.5f;
+
+			const float RingValueDeg = FMath::Fmod(RingValue.Get(0), 360.f);
+			const float RingRadius01 = FMath::Clamp(RingRadius, 0.f, 1.f);
+			const FVector2D KnobSize = RingKnobBrush->GetImageSize();
+
+			const float MaxRadiusPx = FMath::Max(0.f, (FMath::Min(Size.X, Size.Y) * 0.5f) - (FMath::Max(KnobSize.X, KnobSize.Y) * 0.5f));
+			const float RadiusPx = RingRadius01 * MaxRadiusPx;
+
+			// Angle: 0° at +X (to the right). If you want CCW increasing, use -Sin for screen Y-down.
+			const float AngleRad = FMath::DegreesToRadians(RingValueDeg);
+			const FVector2D Dir(FMath::Cos(AngleRad), -FMath::Sin(AngleRad));
+
+			const FVector2D Pos = Center + Dir * RadiusPx;               // knob center position
+			const FVector2D TopLeft = Pos - (KnobSize * 0.5f);
+
+			// Rotate so it "faces" the center.
+			// This assumes your knob art points to the right (+X). If it points up, add/subtract PI/2.
+			const FVector2D ToCenter = Center - Pos;
+			float FaceAngleRad = FMath::Atan2(ToCenter.Y, ToCenter.X);
+
+			// Optional: adjust depending on your texture's forward direction:
+			// FaceAngleRad += PI * 0.5f; // if texture forward is +Y (up)
+
+			FSlateDrawElement::MakeRotatedBox(
+				OutDrawElements,
+				LayerId + 1,
+				AllottedGeometry.ToPaintGeometry(TopLeft, KnobSize),
+				RingKnobBrush,
+				Effects,
+				FaceAngleRad,
+				/*RotationPoint*/ FVector2D(0.5f, 0.5f),                 // pivot in local space (normalized for MakeRotatedBox)
+				FSlateDrawElement::RelativeToElement,
+				RingKnobBrush->GetTint(InWidgetStyle)
+			);
+		}
+
 		return LayerId + 2;
 	}
 
@@ -72,6 +118,7 @@ public:
 
 	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override {
 		if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton) {
+			bIsCenterInteraction = IsCenter(MyGeometry, MouseEvent);
 			bDragging = true;
 			UpdateFromPointer(MyGeometry, MouseEvent);
 			return FReply::Handled().CaptureMouse(AsShared());
@@ -102,36 +149,55 @@ private:
 		const FVector2D Size = MyGeometry.GetLocalSize();
 
 		FVector2D newXY;
-
-		if (bIsCircle) {
-			newXY = ClampToCircle(FVector2D(Local.X / Size.X, 1.f - (Local.Y / Size.Y)));
+		newXY = ClampToCircle(FVector2D(Local.X / Size.X, 1.f - (Local.Y / Size.Y))) * 2.f;
+		
+		if (bIsCenterInteraction) {
+			OnXYChanged.ExecuteIfBound(newXY);
 		} else {
-			const float X = (Size.X > 0.f) ? FMath::Clamp(Local.X / Size.X, 0.f, 1.f) : 0.f;
-			const float Y = (Size.Y > 0.f) ? FMath::Clamp(1.f - (Local.Y / Size.Y), 0.f, 1.f) : 0.f;
-			newXY = FVector2D(X, Y);
+			float angle = FMath::RadiansToDegrees(FMath::Atan2(newXY.Y, newXY.X));
+			angle = FMath::Fmod(angle + 360.0f, 360.0f);
+			OnRingChanged.ExecuteIfBound(angle);
 		}
-
-		OnXYChanged.ExecuteIfBound(newXY);
 	}
 
 	FVector2D ClampToCircle(FVector2D in) {
 		const FVector2D half = FVector2D(.5, .5);
+		const FVector2D centered = (in - half);
 
-		float len = (in - half).Size();
-		if (len <= .5f) return in;
+		float len = centered.Size();
+		if (len <= .5f) return centered;
 
 		len = .5f;
-		FVector2D n = (in - half).GetSafeNormal();
-		return (n * len) + half;
+		FVector2D n = centered.GetSafeNormal();
+		return (n * len);
+	}
+
+	bool IsCenter(const FGeometry& MyGeometry, const FPointerEvent& E) {
+		const FVector2D Local = MyGeometry.AbsoluteToLocal(E.GetScreenSpacePosition());
+		const FVector2D Size = MyGeometry.GetLocalSize();
+
+		FVector2D in;
+		const float X = (Size.X > 0.f) ? FMath::Clamp(Local.X / Size.X, 0.f, 1.f) : 0.f;
+		const float Y = (Size.Y > 0.f) ? FMath::Clamp(1.f - (Local.Y / Size.Y), 0.f, 1.f) : 0.f;
+		in = FVector2D(X, Y);
+
+		const FVector2D half = FVector2D(.5, .5);
+		float len = (in - half).Size()*2.f;
+		return (len <= RingRadius);
 	}
 
 	TAttribute<FVector2D> XYAttr;
-	FOnXYChangedNative OnXYChanged;
+	TAttribute<float> RingValue;
+	FOnTriangleXYChangedNative OnXYChanged;
+	FOnRingChangedNative OnRingChanged;
 
 	const FSlateBrush* BackgroundBrush = nullptr;
 	const FSlateBrush* KnobBrush = nullptr;
+	const FSlateBrush* RingKnobBrush = nullptr;
 
-	bool bIsCircle = false;
+	bool bRotateRingKnob = false;
+	float RingRadius = 0.7f;
 
+	bool bIsCenterInteraction = false;
 	bool bDragging = false;
 };

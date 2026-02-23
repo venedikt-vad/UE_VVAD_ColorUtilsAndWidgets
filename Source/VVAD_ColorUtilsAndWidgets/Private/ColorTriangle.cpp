@@ -82,7 +82,7 @@ void UColorTriangle::UpdateMID() {
 		BackgroundMID->SetScalarParameterValue(TEXT("HueOffset"), -HueOffset / 360.f);
 	}
 	if (MyXYSquare.IsValid()) {
-		MyXYSquare->SetIsCircle(true);
+		//MyXYSquare->SetIsCircle(true);
 		MyXYSquare->SetBackgroundBrush(BackgroundMID ? &BackgroundBrush : nullptr);
 		if (CurrentValueHSV.B > 0.5 && bUseDarkKnobOnLightSurface) {
 			MyXYSquare->SetKnobBrush(&DarkKnobBrush);
