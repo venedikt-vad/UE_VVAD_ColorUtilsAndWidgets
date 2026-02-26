@@ -25,6 +25,7 @@ public:
 
 	void SetBackgroundBrush(const FSlateBrush* InBrush) { BackgroundBrush = InBrush; }
 	void SetKnobBrush(const FSlateBrush* InBrush) { KnobBrush = InBrush; }
+	void SetRingKnobBrush(const FSlateBrush* InBrush) { RingKnobBrush = InBrush; }
 	void SetRotateRingKnob(bool RotateRingKnob) { bRotateRingKnob = RotateRingKnob; }
 	void SetRadius(float radius) { RingRadius = radius; }
 
@@ -76,34 +77,23 @@ public:
 
 			const float RingValueDeg = FMath::Fmod(RingValue.Get(0), 360.f);
 			const float RingRadius01 = FMath::Clamp(RingRadius, 0.f, 1.f);
-			const FVector2D KnobSize = RingKnobBrush->GetImageSize();
+			FVector2D KnobSize = RingKnobBrush->GetImageSize();
 
-			const float MaxRadiusPx = FMath::Max(0.f, (FMath::Min(Size.X, Size.Y) * 0.5f) - (FMath::Max(KnobSize.X, KnobSize.Y) * 0.5f));
-			const float RadiusPx = RingRadius01 * MaxRadiusPx;
+			const float dist = RingRadius01 + ((1.f - RingRadius01) / 2.f);
 
-			// Angle: 0° at +X (to the right). If you want CCW increasing, use -Sin for screen Y-down.
-			const float AngleRad = FMath::DegreesToRadians(RingValueDeg);
-			const FVector2D Dir(FMath::Cos(AngleRad), -FMath::Sin(AngleRad));
-
-			const FVector2D Pos = Center + Dir * RadiusPx;               // knob center position
-			const FVector2D TopLeft = Pos - (KnobSize * 0.5f);
-
-			// Rotate so it "faces" the center.
-			// This assumes your knob art points to the right (+X). If it points up, add/subtract PI/2.
-			const FVector2D ToCenter = Center - Pos;
-			float FaceAngleRad = FMath::Atan2(ToCenter.Y, ToCenter.X);
-
-			// Optional: adjust depending on your texture's forward direction:
-			// FaceAngleRad += PI * 0.5f; // if texture forward is +Y (up)
+			FVector2D target = FVector2D(dist*Center.X - (KnobSize.X / 2.f), 0);
+			target = target.GetRotated(RingValueDeg);
+			FVector2D offs = target.GetRotated(-90).GetSafeNormal()*(KnobSize.Y/2.f);
+			target += Center + offs;
 
 			FSlateDrawElement::MakeRotatedBox(
 				OutDrawElements,
 				LayerId + 1,
-				AllottedGeometry.ToPaintGeometry(TopLeft, KnobSize),
+				AllottedGeometry.ToPaintGeometry(target, KnobSize),
 				RingKnobBrush,
 				Effects,
-				FaceAngleRad,
-				/*RotationPoint*/ FVector2D(0.5f, 0.5f),                 // pivot in local space (normalized for MakeRotatedBox)
+				FMath::DegreesToRadians(RingValueDeg),
+				FVector2D(.5f,.5f),
 				FSlateDrawElement::RelativeToElement,
 				RingKnobBrush->GetTint(InWidgetStyle)
 			);
@@ -154,7 +144,7 @@ private:
 		if (bIsCenterInteraction) {
 			OnXYChanged.ExecuteIfBound(newXY);
 		} else {
-			float angle = FMath::RadiansToDegrees(FMath::Atan2(newXY.Y, newXY.X));
+			float angle = 360.0f -FMath::RadiansToDegrees(FMath::Atan2(newXY.Y, newXY.X));
 			angle = FMath::Fmod(angle + 360.0f, 360.0f);
 			OnRingChanged.ExecuteIfBound(angle);
 		}

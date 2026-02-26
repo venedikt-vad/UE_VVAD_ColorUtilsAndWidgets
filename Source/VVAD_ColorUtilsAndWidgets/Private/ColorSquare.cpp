@@ -57,6 +57,8 @@ TSharedRef<SWidget> UColorSquare::RebuildWidget() {
 
 		}));
 
+	SetXY(FVector2D(.5f, .5f));
+
 	return MyXYSquare.ToSharedRef();
 }
 

@@ -50,6 +50,8 @@ TSharedRef<SWidget> UColorCircle::RebuildWidget() {
 
 		}));
 
+	SetXY(FVector2D(.5f, .5f));
+
 	return MyXYSquare.ToSharedRef();
 }
 
