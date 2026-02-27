@@ -16,6 +16,10 @@ class VVAD_COLORUTILSANDWIDGETS_API UColorCircle : public UWidget {
 public:
 	UColorCircle(const FObjectInitializer& ObjectInitializer);
 
+#if WITH_EDITOR
+	virtual const FText GetPaletteCategory() override;
+#endif
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance", meta = (ClampMin = "0.0", ClampMax = "360.0", UIMin = "0.0", UIMax = "360.0", Units = "Degrees"))
 	float HueOffset = 270;
 

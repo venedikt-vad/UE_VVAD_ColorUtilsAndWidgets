@@ -166,3 +166,9 @@ void UColorSquare::ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMat
 	Brush.ImageSize = Size;
 	Brush.TintColor = FSlateColor(Tint);
 }
+
+#if WITH_EDITOR
+const FText UColorSquare::GetPaletteCategory() {
+	return NSLOCTEXT("VVAD_COLORUTILSANDWIDGETS", "Color Ultility Widgets", "Color");
+}
+#endif

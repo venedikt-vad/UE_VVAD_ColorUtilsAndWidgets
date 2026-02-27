@@ -16,6 +16,10 @@ class VVAD_COLORUTILSANDWIDGETS_API UColorTriangle : public UWidget {
 public:
 	UColorTriangle(const FObjectInitializer& ObjectInitializer);
 
+#if WITH_EDITOR
+	virtual const FText GetPaletteCategory() override;
+#endif
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance", meta = (ClampMin = "0.0", ClampMax = "360.0", UIMin = "0.0", UIMax = "360.0", Units = "Degrees"))
 	float HueOffset = 270;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance", meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0", Units = "Percent"))

@@ -23,6 +23,12 @@ UColorCircle::UColorCircle(const FObjectInitializer& ObjectInitializer) {
 	}
 }
 
+#if WITH_EDITOR
+const FText UColorCircle::GetPaletteCategory() {
+	return NSLOCTEXT("VVAD_COLORUTILSANDWIDGETS", "Color Ultility Widgets", "Color");
+}
+#endif
+
 
 TSharedRef<SWidget> UColorCircle::RebuildWidget() {
 	MyXYSquare = SNew(SColorSquare)

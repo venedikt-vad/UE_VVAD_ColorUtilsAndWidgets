@@ -209,3 +209,9 @@ FVector2D UColorTriangle::PointFromSV(
 
 	return P;
 }
+
+#if WITH_EDITOR
+const FText UColorTriangle::GetPaletteCategory() {
+	return NSLOCTEXT("VVAD_COLORUTILSANDWIDGETS", "Color Ultility Widgets", "Color");
+}
+#endif

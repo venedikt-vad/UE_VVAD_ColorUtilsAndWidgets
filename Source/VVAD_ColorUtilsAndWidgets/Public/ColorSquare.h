@@ -22,6 +22,10 @@ class VVAD_COLORUTILSANDWIDGETS_API UColorSquare : public UWidget {
 public:
 	UColorSquare(const FObjectInitializer& ObjectInitializer);
 
+#if WITH_EDITOR
+	virtual const FText GetPaletteCategory() override;
+#endif
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance")
 	EColorSquareSelectorType SelectorType = EColorSquareSelectorType::SVSquare;
 
