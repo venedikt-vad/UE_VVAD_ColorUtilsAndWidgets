@@ -36,8 +36,6 @@ TSharedRef<SWidget> UColorSquare::RebuildWidget() {
 		
 			CurrentPos = XY;
 		
-			OnXYChanged.Broadcast(CurrentPos);
-		
 			FLinearColor NewColor = CurrentValueHSV;
 			switch (SelectorType) {
 			case EColorSquareSelectorType::SVSquare:

@@ -7,7 +7,6 @@
 #include "ColorTriangle.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTriangleXYChangedBP, FVector2D, XY);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTriangleColorChangedBP, FLinearColor, color);
 
 UCLASS(BlueprintType, Blueprintable, meta=(DisplayName="Color Triangle"))
@@ -48,9 +47,6 @@ public:
 	FVector2D CurrentPos = FVector2D::ZeroVector;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Value")
 	float CurrentAngle = 0;
-
-	UPROPERTY(BlueprintAssignable, Category="Events")
-	FOnTriangleXYChangedBP OnXYChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnTriangleColorChangedBP OnColorChanged;

@@ -7,7 +7,6 @@
 #include "ColorCircle.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCircleXYChangedBP, FVector2D, XY);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCircleColorChangedBP, FLinearColor, color);
 
 UCLASS(BlueprintType, Blueprintable, meta=(DisplayName="Color Circle"))
@@ -31,14 +30,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance|Knob|Dark")
 	FSlateBrush DarkKnobBrush;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Appearance|Knob")
-	FVector2D KnobSizeOverride = FVector2D::ZeroVector;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Appearance|Knob")
+	FVector2D KnobSizeOverride = FVector2D::ZeroVector;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Value")
 	FVector2D CurrentPos = FVector2D::ZeroVector;
-
-	UPROPERTY(BlueprintAssignable, Category="Events")
-	FOnCircleXYChangedBP OnXYChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnCircleColorChangedBP OnColorChanged;

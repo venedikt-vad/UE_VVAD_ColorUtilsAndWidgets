@@ -34,11 +34,8 @@ TSharedRef<SWidget> UColorTriangle::RebuildWidget() {
 		
 			//CurrentPos = ClampToCircle(XY);
 			CurrentPos = XY;
-
-			OnXYChanged.Broadcast(CurrentPos); //TODO Remove
 		
 			FLinearColor NewColor = CurrentValueHSV;
-			
 			{
 				FVector2D uvec = FVector2D(0, InnerRadius * .5f).GetRotated(-90 - CurrentValueHSV.R - HueOffset);
 				FVector c = Barycentric(CurrentPos*.5f, uvec.GetRotated(-120), uvec, uvec.GetRotated(120));

@@ -37,8 +37,6 @@ TSharedRef<SWidget> UColorCircle::RebuildWidget() {
 		
 			CurrentPos = ClampToCircle(XY);
 
-			OnXYChanged.Broadcast(CurrentPos);
-		
 			FLinearColor NewColor = CurrentValueHSV;
 			
 			{

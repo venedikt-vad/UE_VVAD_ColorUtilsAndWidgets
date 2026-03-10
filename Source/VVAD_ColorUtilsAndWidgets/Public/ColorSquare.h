@@ -13,7 +13,6 @@ enum class EColorSquareSelectorType : uint8 {
 };
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnXYChangedBP, FVector2D, XY);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnColorChangedBP, FLinearColor, color);
 
 UCLASS(BlueprintType, Blueprintable, meta=(DisplayName="Color Square"))
@@ -48,16 +47,12 @@ public:
 	FSlateBrush DarkKnobBrushDisabled;*/
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Appearance|Knob")
-	FVector2D KnobSizeOverride = FVector2D::ZeroVector;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Appearance|Knob")
+	FVector2D KnobSizeOverride = FVector2D::ZeroVector;*/
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Value")
 	FVector2D CurrentPos = FVector2D::ZeroVector;
-
-
-	UPROPERTY(BlueprintAssignable, Category="Events")
-	FOnXYChangedBP OnXYChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnColorChangedBP OnColorChanged;
