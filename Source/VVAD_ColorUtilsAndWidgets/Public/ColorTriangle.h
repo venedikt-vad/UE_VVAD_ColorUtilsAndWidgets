@@ -22,9 +22,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance", meta = (ClampMin = "0.0", ClampMax = "360.0", UIMin = "0.0", UIMax = "360.0", Units = "Degrees"))
 	float HueOffset = 270;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance", meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0", Units = "Percent"))
-	float InnerRadius = .7f;
+	float InnerRadius = .8f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance")
+	bool bRotateWithHue = true;  //TODO Fix offset when false
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance|Knob")
+	bool bRotateRingKnob = true;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Appearance|Knob|Light")
 	FSlateBrush KnobBrush;

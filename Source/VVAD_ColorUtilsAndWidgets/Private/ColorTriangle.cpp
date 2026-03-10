@@ -32,12 +32,11 @@ TSharedRef<SWidget> UColorTriangle::RebuildWidget() {
 		.RingValue(TAttribute<float>::Create(TAttribute<float>::FGetter::CreateUObject(this, &UColorTriangle::GetRingAngle)))
 		.OnXYChanged(FOnTriangleXYChangedNative::CreateLambda([this](FVector2D XY) {
 		
-			//CurrentPos = ClampToCircle(XY);
 			CurrentPos = XY;
 		
 			FLinearColor NewColor = CurrentValueHSV;
 			{
-				FVector2D uvec = FVector2D(0, InnerRadius * .5f).GetRotated(-90 - CurrentValueHSV.R - HueOffset);
+				FVector2D uvec = FVector2D(0, InnerRadius * .5f).GetRotated(-90 - (bRotateWithHue?CurrentValueHSV.R:0) - HueOffset);
 				FVector c = Barycentric(CurrentPos*.5f, uvec.GetRotated(-120), uvec, uvec.GetRotated(120));
 				NewColor.G = FMath::Clamp(((c.Z + c.X) > 1e-6f) ? (c.X / (c.Z + c.X)) : 0.0f, 0.f,1.f);
 				NewColor.B = pow(1.f - FMath::Clamp(c.Y, 0.f, 1.f), 3.f);
@@ -50,7 +49,7 @@ TSharedRef<SWidget> UColorTriangle::RebuildWidget() {
 		}))
 		.OnRingChanged(FOnRingChangedNative::CreateLambda([this](float Angle){
 			FLinearColor NewColor = CurrentValueHSV;
-			NewColor.R = FMath::Fmod(Angle + 360.0f, 360.0f);
+			NewColor.R = FMath::Fmod(Angle - HueOffset + 360.0f, 360.0f);
 			CurrentValueHSV = NewColor;
 			OnColorChanged.Broadcast(NewColor);
 		}));
@@ -83,13 +82,13 @@ void UColorTriangle::EnsureMID() {
 void UColorTriangle::UpdateMID() {
 	EnsureMID();
 	if (BackgroundMID) {
-		//TODO bRotateWithHue 
 		BackgroundMID->SetScalarParameterValue(TEXT("Hue"), CurrentValueHSV.R / 360.f);
 		BackgroundMID->SetScalarParameterValue(TEXT("Radius"), InnerRadius);
 		BackgroundMID->SetScalarParameterValue(TEXT("HueOffset"), -HueOffset / 360.f);
+		BackgroundMID->SetScalarParameterValue(TEXT("RotWithHue"), bRotateWithHue ? 1 : 0);
 	}
 	if (MyXYSquare.IsValid()) {
-		MyXYSquare->SetRotateRingKnob(true); //TODO: Add user parameter
+		MyXYSquare->SetRotateRingKnob(bRotateRingKnob);
 		MyXYSquare->SetRadius(InnerRadius);
 		MyXYSquare->SetBackgroundBrush(BackgroundMID ? &BackgroundBrush : nullptr);
 		if (CurrentValueHSV.B > 0.5 && bUseDarkKnobOnLightSurface) {
@@ -143,13 +142,12 @@ void UColorTriangle::SetColorHSV(FLinearColor NewColorHSV) {
 
 	//TODO Udate to triangle
 
-	const FVector2D uvec = FVector2D(0, InnerRadius * .5f).GetRotated(-90 -NewColorHSV.R - HueOffset);
+	const FVector2D uvec = FVector2D(0, InnerRadius * .5f).GetRotated(-90 - (bRotateWithHue?CurrentValueHSV.R:0) - HueOffset);
 
 	FVector2D target = PointFromSV(NewColorHSV.G, pow(NewColorHSV.B, 1./3.), uvec.GetRotated(-120), uvec, uvec.GetRotated(120));
 	target += FVector2D(.5f, .5f);
 
-
-	CurrentAngle = CurrentValueHSV.R;
+	CurrentAngle = CurrentValueHSV.R + HueOffset;
 
 	SetXY(target);
 

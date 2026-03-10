@@ -81,7 +81,7 @@ public:
 
 			const float dist = RingRadius01 + ((1.f - RingRadius01) / 2.f);
 
-			FVector2D target = FVector2D(dist*Center.X - (KnobSize.X / 2.f), 0);
+			FVector2D target = FVector2D(dist*Center.X - (bRotateRingKnob?(KnobSize.X / 2.f):0), 0);
 			target = target.GetRotated(RingValueDeg);
 			FVector2D offs = target.GetRotated(-90).GetSafeNormal()*(KnobSize.Y/2.f);
 			target += Center + offs;
@@ -92,7 +92,7 @@ public:
 				AllottedGeometry.ToPaintGeometry(target, KnobSize),
 				RingKnobBrush,
 				Effects,
-				FMath::DegreesToRadians(RingValueDeg),
+				bRotateRingKnob?FMath::DegreesToRadians(RingValueDeg):0,
 				FVector2D(.5f,.5f),
 				FSlateDrawElement::RelativeToElement,
 				RingKnobBrush->GetTint(InWidgetStyle)
