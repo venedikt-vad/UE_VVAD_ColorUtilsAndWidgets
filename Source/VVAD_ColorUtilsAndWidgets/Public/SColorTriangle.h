@@ -83,8 +83,12 @@ public:
 
 			FVector2D target = FVector2D(dist*Center.X - (bRotateRingKnob?(KnobSize.X / 2.f):0), 0);
 			target = target.GetRotated(RingValueDeg);
-			FVector2D offs = target.GetRotated(-90).GetSafeNormal()*(KnobSize.Y/2.f);
+			FVector2D offs = target.GetRotated(-90).GetSafeNormal()*(KnobSize.Y/2.f) * (bRotateRingKnob?1.f:0.f);
 			target += Center + offs;
+
+			if (!bRotateRingKnob) {
+				target -= KnobSize / 2.f;
+			}
 
 			FSlateDrawElement::MakeRotatedBox(
 				OutDrawElements,
