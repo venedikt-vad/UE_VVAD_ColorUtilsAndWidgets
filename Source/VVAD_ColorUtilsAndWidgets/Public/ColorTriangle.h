@@ -81,11 +81,6 @@ private:
 	void EnsureMID();
 	void UpdateMID();
 
-	//TODO Move to WidgetHelperFunctions.h
-	void ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint = FLinearColor::White);
-
-	FVector2D ClampToCircle(FVector2D in);
-
 	static float cross(FVector2D a, FVector2D b) { return a.X * b.Y - a.Y * b.X; };
 	FVector2D PointFromSV(float S, float V, FVector2D W, FVector2D H, FVector2D B);
 	FVector Barycentric(FVector2D P, FVector2D W, FVector2D H, FVector2D B);

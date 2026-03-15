@@ -1,5 +1,6 @@
 #include "ColorTriangle.h"
 #include "SColorTriangle.h"
+#include "ColorWidgetHelpers.h"
 
 UColorTriangle::UColorTriangle(const FObjectInitializer& ObjectInitializer) {
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> HS_MatFinder(
@@ -101,17 +102,6 @@ void UColorTriangle::UpdateMID() {
 	}
 }
 
-FVector2D UColorTriangle::ClampToCircle(FVector2D in) {
-	const FVector2D half = FVector2D(.5, .5);
-
-	float len = (in - half).Size();
-	if (len <= .5f) return in;
-
-	len = .5f;
-	FVector2D n = (in - half).GetSafeNormal();
-	return (n * len) + half;
-}
-
 void UColorTriangle::SynchronizeProperties() {
 	Super::SynchronizeProperties();
 	UpdateMID();
@@ -162,14 +152,6 @@ FLinearColor UColorTriangle::GetColorHSV() {
 FLinearColor UColorTriangle::GetColor() {
 	return GetColorHSV().HSVToLinearRGB();
 }
-
-void UColorTriangle::ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint) {
-	Brush.SetResourceObject(Mat);
-	Brush.DrawAs = ESlateBrushDrawType::Image;
-	Brush.ImageSize = Size;
-	Brush.TintColor = FSlateColor(Tint);
-}
-
 
 FVector UColorTriangle::Barycentric(FVector2D P, FVector2D W, FVector2D H, FVector2D B){
 	FVector2D v0{ H.X - W.X, H.Y - W.Y };

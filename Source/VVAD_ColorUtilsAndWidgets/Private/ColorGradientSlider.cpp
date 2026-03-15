@@ -3,6 +3,8 @@
 
 #include "ColorGradientSlider.h"
 #include "VVAD_ColorUtilsAndWidgetsBPLibrary.h"
+#include "ColorWidgetHelpers.h"
+
 
 UColorGradientSlider::UColorGradientSlider(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 	//Load from plugin dir:  
@@ -249,13 +251,6 @@ void UColorGradientSlider::UpdateWidgetDetails() {
 	WidgetStyle.NormalThumbImage = NormalThumb;
 	WidgetStyle.HoveredThumbImage = HoveredThumb;
 	WidgetStyle.DisabledThumbImage = DisabledThumb;
-}
-
-void UColorGradientSlider::ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat) {
-	Brush.SetResourceObject(Mat);
-	Brush.DrawAs = ESlateBrushDrawType::Image;
-	Brush.ImageSize = Size;
-	Brush.TintColor = FSlateColor(FLinearColor::White);
 }
 
 void UColorGradientSlider::UpdateMatInst() {

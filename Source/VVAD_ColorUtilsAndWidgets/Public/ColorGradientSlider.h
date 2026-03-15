@@ -101,7 +101,6 @@ private:
 	UMaterialInstanceDynamic* MatInst = nullptr;
 
 	void UpdateWidgetDetails();
-	void ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat);
 
 	void UpdateMatInst();
 };

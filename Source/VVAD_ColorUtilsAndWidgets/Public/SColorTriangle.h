@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Widgets/SLeafWidget.h"
 #include "Styling/SlateBrush.h"
+#include "ColorWidgetHelpers.h"
 
 DECLARE_DELEGATE_OneParam(FOnTriangleXYChangedNative, FVector2D /*XY*/);
 DECLARE_DELEGATE_OneParam(FOnRingChangedNative, float /*angle*/);
@@ -143,7 +144,7 @@ private:
 		const FVector2D Size = MyGeometry.GetLocalSize();
 
 		FVector2D newXY;
-		newXY = ClampToCircle(FVector2D(Local.X / Size.X, 1.f - (Local.Y / Size.Y))) * 2.f;
+		newXY = (ClampToCircle(FVector2D(Local.X / Size.X, 1.f - (Local.Y / Size.Y))) - FVector2D(.5, .5)) * 2.f;
 		
 		if (bIsCenterInteraction) {
 			OnXYChanged.ExecuteIfBound(newXY);
@@ -152,18 +153,6 @@ private:
 			angle = FMath::Fmod(angle + 360.0f, 360.0f);
 			OnRingChanged.ExecuteIfBound(angle);
 		}
-	}
-
-	FVector2D ClampToCircle(FVector2D in) {
-		const FVector2D half = FVector2D(.5, .5);
-		const FVector2D centered = (in - half);
-
-		float len = centered.Size();
-		if (len <= .5f) return centered;
-
-		len = .5f;
-		FVector2D n = centered.GetSafeNormal();
-		return (n * len);
 	}
 
 	bool IsCenter(const FGeometry& MyGeometry, const FPointerEvent& E) {

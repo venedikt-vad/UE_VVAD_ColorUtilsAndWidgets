@@ -1,5 +1,6 @@
 #include "ColorSquare.h"
 #include "SColorSquare.h"
+#include "ColorWidgetHelpers.h"
 
 UColorSquare::UColorSquare(const FObjectInitializer& ObjectInitializer) {
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> SV_MatFinder(
@@ -156,13 +157,6 @@ FLinearColor UColorSquare::GetColorHSV() {
 
 FLinearColor UColorSquare::GetColor() {
 	return GetColorHSV().HSVToLinearRGB();
-}
-
-void UColorSquare::ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint) {
-	Brush.SetResourceObject(Mat);
-	Brush.DrawAs = ESlateBrushDrawType::Image;
-	Brush.ImageSize = Size;
-	Brush.TintColor = FSlateColor(Tint);
 }
 
 #if WITH_EDITOR

@@ -80,8 +80,6 @@ private:
 
 	void UpdateMID();
 
-	void ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint = FLinearColor::White);
-
 	UPROPERTY(Transient)
 	FLinearColor CurrentValueHSV = FLinearColor(0, 1, 1, 1);
 

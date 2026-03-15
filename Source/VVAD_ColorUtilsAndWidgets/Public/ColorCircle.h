@@ -62,11 +62,6 @@ private:
 	void EnsureMID();
 	void UpdateMID();
 
-	//TODO Move to WidgetHelperFunctions.h
-	void ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint = FLinearColor::White);
-
-	FVector2D ClampToCircle(FVector2D in);
-
 	UPROPERTY(Transient)
 	FLinearColor CurrentValueHSV = FLinearColor(0, 1, 1, 1);
 

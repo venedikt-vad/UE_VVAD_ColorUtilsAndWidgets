@@ -1,5 +1,6 @@
 #include "ColorCircle.h"
 #include "SColorSquare.h"
+#include "ColorWidgetHelpers.h"
 
 UColorCircle::UColorCircle(const FObjectInitializer& ObjectInitializer) {
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> HS_MatFinder(
@@ -99,17 +100,6 @@ void UColorCircle::UpdateMID() {
 	}
 }
 
-FVector2D UColorCircle::ClampToCircle(FVector2D in) {
-	const FVector2D half = FVector2D(.5, .5);
-
-	float len = (in - half).Size();
-	if (len <= .5f) return in;
-
-	len = .5f;
-	FVector2D n = (in - half).GetSafeNormal();
-	return (n * len) + half;
-}
-
 void UColorCircle::SynchronizeProperties() {
 	Super::SynchronizeProperties();
 	UpdateMID();
@@ -148,11 +138,4 @@ FLinearColor UColorCircle::GetColorHSV() {
 
 FLinearColor UColorCircle::GetColor() {
 	return GetColorHSV().HSVToLinearRGB();
-}
-
-void UColorCircle::ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint) {
-	Brush.SetResourceObject(Mat);
-	Brush.DrawAs = ESlateBrushDrawType::Image;
-	Brush.ImageSize = Size;
-	Brush.TintColor = FSlateColor(Tint);
 }
