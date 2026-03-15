@@ -2,6 +2,7 @@
 
 
 #include "ColorGradientSlider.h"
+#include "VVAD_ColorUtilsAndWidgetsBPLibrary.h"
 
 UColorGradientSlider::UColorGradientSlider(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 	//Load from plugin dir:  
@@ -35,6 +36,14 @@ UColorGradientSlider::UColorGradientSlider(const FObjectInitializer& ObjectIniti
 	if (BlueMatFinder.Succeeded() && BlueMatFinder.Object) {
 		BlueMat = BlueMatFinder.Object;
 	}
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> CustomMatFinder(
+		TEXT("Material'/VVAD_ColorUtilsAndWidgets/Materials/HSV/M_UI_CustomGradient.M_UI_CustomGradient'"));
+	if (CustomMatFinder.Succeeded() && CustomMatFinder.Object) {
+		CustomMat = CustomMatFinder.Object;
+	}
+
+	
+
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> ThumbMatFinder(
 		TEXT("Material'/VVAD_ColorUtilsAndWidgets/Materials/M_UI_Thumb.M_UI_Thumb'"));
 	if (ThumbMatFinder.Succeeded() && ThumbMatFinder.Object) {
@@ -173,6 +182,7 @@ void UColorGradientSlider::HandleSliderValueChanged(float InValue) {
 		NewValue = NewValue.LinearRGBToHSV();
 		break;
 	case EColorSliderType::Custom:
+		NewValue = colorCurve->GetLinearColorValue(InValue).LinearRGBToHSV();
 		break;
 	default:
 		break;
@@ -210,9 +220,7 @@ void UColorGradientSlider::UpdateWidgetDetails() {
 		mat = BlueMat;
 		break;
 	case EColorSliderType::Custom:
-		mat = nullptr; {
-			//apply gradient image
-		}
+		mat = CustomMat;
 		break;
 	default:
 		mat = HueMat;
@@ -221,7 +229,12 @@ void UColorGradientSlider::UpdateWidgetDetails() {
 
 	MatInst = UMaterialInstanceDynamic::Create(mat, this);
 
-	if (mat) {
+	if (SliderType == EColorSliderType::Custom) {
+		UTexture2D* Tex = UVVAD_ColorUtilsAndWidgetsBPLibrary::CurveLinearColor_CreateTexture(this, 128, colorCurve);
+		MatInst->SetTextureParameterValue(TEXT("Tex"), Tex);
+	}
+
+	if (MatInst) {
 		ApplyMatBrush(WidgetStyle.NormalBarImage, BarSize, MatInst);
 		ApplyMatBrush(WidgetStyle.HoveredBarImage, BarSize, MatInst);
 		ApplyMatBrush(WidgetStyle.DisabledBarImage, BarSize, MatInst);

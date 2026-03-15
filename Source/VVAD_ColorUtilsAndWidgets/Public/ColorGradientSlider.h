@@ -38,6 +38,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance")
 	EColorSliderType SliderType = EColorSliderType::Hue;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance", meta = (EditCondition = "SliderType==EColorSliderType::Custom"))
+	UCurveLinearColor* colorCurve;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance")
 	float Thickness = 60.f;
 
@@ -88,6 +91,9 @@ private:
 	UMaterialInterface* GreenMat = nullptr;
 	UPROPERTY(Transient)
 	UMaterialInterface* BlueMat = nullptr;
+	UPROPERTY(Transient)
+	UMaterialInterface* CustomMat = nullptr;
+	
 
 	UPROPERTY(Transient)
 	FLinearColor CurrentValueHSV = FLinearColor(0, 1, 1, 1);
