@@ -62,6 +62,8 @@ private:
 	void EnsureMID();
 	void UpdateMID();
 
+	void KnobColorUpdate();
+
 	UPROPERTY(Transient)
 	FLinearColor CurrentValueHSV = FLinearColor(0, 1, 1, 1);
 

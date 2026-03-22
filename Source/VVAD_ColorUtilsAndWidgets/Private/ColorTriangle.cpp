@@ -44,7 +44,7 @@ TSharedRef<SWidget> UColorTriangle::RebuildWidget() {
 			}
 
 			CurrentValueHSV = NewColor;
-			
+			KnobColorUpdate();
 			OnColorChanged.Broadcast(NewColor);
 
 		}))
@@ -92,13 +92,18 @@ void UColorTriangle::UpdateMID() {
 		MyXYSquare->SetRotateRingKnob(bRotateRingKnob);
 		MyXYSquare->SetRadius(InnerRadius);
 		MyXYSquare->SetBackgroundBrush(BackgroundMID ? &BackgroundBrush : nullptr);
-		if (CurrentValueHSV.B > 0.5 && bUseDarkKnobOnLightSurface) {
-			MyXYSquare->SetKnobBrush(&DarkKnobBrush);
-			MyXYSquare->SetRingKnobBrush(&DarkRingKnobBrush);
-		} else {
-			MyXYSquare->SetKnobBrush(&KnobBrush);
-			MyXYSquare->SetRingKnobBrush(&RingKnobBrush);
-		}
+		KnobColorUpdate();
+	}
+}
+
+void UColorTriangle::KnobColorUpdate() {
+	if (!MyXYSquare.IsValid()) return;
+	if (CurrentValueHSV.B > 0.5 && bUseDarkKnobOnLightSurface) {
+		MyXYSquare->SetKnobBrush(&DarkKnobBrush);
+		MyXYSquare->SetRingKnobBrush(&DarkRingKnobBrush);
+	} else {
+		MyXYSquare->SetKnobBrush(&KnobBrush);
+		MyXYSquare->SetRingKnobBrush(&RingKnobBrush);
 	}
 }
 

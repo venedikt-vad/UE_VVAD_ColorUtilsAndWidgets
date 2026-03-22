@@ -80,6 +80,7 @@ private:
 
 	void EnsureMID();
 	void UpdateMID();
+	void KnobColorUpdate();
 
 	static float cross(FVector2D a, FVector2D b) { return a.X * b.Y - a.Y * b.X; };
 	FVector2D PointFromSV(float S, float V, FVector2D W, FVector2D H, FVector2D B);

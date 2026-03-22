@@ -51,7 +51,7 @@ TSharedRef<SWidget> UColorSquare::RebuildWidget() {
 				break;
 			}
 			CurrentValueHSV = NewColor;
-			
+			KnobColorUpdate();
 			OnColorChanged.Broadcast(NewColor);
 
 		}));
@@ -100,12 +100,16 @@ void UColorSquare::UpdateMID() {
 	}
 	if (MyXYSquare.IsValid()) {
 		MyXYSquare->SetBackgroundBrush(BackgroundMID ? &BackgroundBrush : nullptr);
-		if (CurrentValueHSV.B > 0.5 && bUseDarkKnobOnLightSurface) {
-			MyXYSquare->SetKnobBrush(&DarkKnobBrush);
-		} else {
-			MyXYSquare->SetKnobBrush(&KnobBrush);
+		KnobColorUpdate();
+	}
+}
 
-		}
+void UColorSquare::KnobColorUpdate() {
+	if (!MyXYSquare.IsValid()) return;
+	if (CurrentValueHSV.B > 0.5 && bUseDarkKnobOnLightSurface) {
+		MyXYSquare->SetKnobBrush(&DarkKnobBrush);
+	} else {
+		MyXYSquare->SetKnobBrush(&KnobBrush);
 	}
 }
 

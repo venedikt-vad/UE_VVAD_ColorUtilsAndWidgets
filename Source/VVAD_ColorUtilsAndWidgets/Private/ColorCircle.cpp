@@ -35,9 +35,7 @@ TSharedRef<SWidget> UColorCircle::RebuildWidget() {
 	MyXYSquare = SNew(SColorSquare)
 		.XY(TAttribute<FVector2D>::Create(TAttribute<FVector2D>::FGetter::CreateUObject(this, &UColorCircle::GetXY)))
 		.OnXYChanged(FOnXYChangedNative::CreateLambda([this](FVector2D XY) {
-		
 			CurrentPos = ClampToCircle(XY);
-
 			FLinearColor NewColor = CurrentValueHSV;
 			
 			{
@@ -50,13 +48,11 @@ TSharedRef<SWidget> UColorCircle::RebuildWidget() {
 			}
 
 			CurrentValueHSV = NewColor;
-			
+			KnobColorUpdate();
 			OnColorChanged.Broadcast(NewColor);
-
 		}));
 
 	SetXY(FVector2D(.5f, .5f));
-
 	return MyXYSquare.ToSharedRef();
 }
 
@@ -91,12 +87,16 @@ void UColorCircle::UpdateMID() {
 	if (MyXYSquare.IsValid()) {
 		MyXYSquare->SetIsCircle(true);
 		MyXYSquare->SetBackgroundBrush(BackgroundMID ? &BackgroundBrush : nullptr);
-		if (CurrentValueHSV.B > 0.5 && bUseDarkKnobOnLightSurface) {
-			MyXYSquare->SetKnobBrush(&DarkKnobBrush);
-		} else {
-			MyXYSquare->SetKnobBrush(&KnobBrush);
+		KnobColorUpdate();
+	}
+}
 
-		}
+void UColorCircle::KnobColorUpdate() {
+	if (!MyXYSquare.IsValid()) return;
+	if (CurrentValueHSV.B > 0.5 && bUseDarkKnobOnLightSurface) {
+		MyXYSquare->SetKnobBrush(&DarkKnobBrush);
+	} else {
+		MyXYSquare->SetKnobBrush(&KnobBrush);
 	}
 }
 
