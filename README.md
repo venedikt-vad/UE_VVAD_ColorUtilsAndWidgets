@@ -35,13 +35,9 @@ or
 -   
 
 ## Screenshots
-![WG_HueCircle](Resources/Screenshots/WG_HueCircle.png)
-![WG_ColorTriangle](Resources/Screenshots/WG_ColorTriangle.png)
+<img src="Resources/Screenshots/WG_HueCircle.png" width=30%> <img src="Resources/Screenshots/WG_ColorTriangle.png" width=30%>
 
-![WG_Sliders_RGB](Resources/Screenshots/WG_Sliders_RGB.png)
-![WG_Sliders_HSV](Resources/Screenshots/WG_Sliders_HSV.png)
+<img src="Resources/Screenshots/WG_Square_SV.png" width=30%> <img src="Resources/Screenshots/WG_Square_HS.png" width=30%>
 
-![WG_Square_SV](Resources/Screenshots/WG_Square_SV.png)
-![WG_Square_HS](Resources/Screenshots/WG_Square_HS.png)
+<img src="Resources/Screenshots/WG_Sliders_RGB.png" width=30%> <img src="Resources/Screenshots/WG_Sliders_HSV.png" width=30%> <img src="Resources/Screenshots/WG_Slider_Custom.png" width=30%>
 
-![WG_Slider_Custom](Resources/Screenshots/WG_Slider_Custom.png)
