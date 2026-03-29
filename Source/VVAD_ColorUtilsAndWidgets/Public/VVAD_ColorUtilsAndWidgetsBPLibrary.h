@@ -25,32 +25,6 @@
 *	https://wiki.unrealengine.com/Custom_Blueprint_Node_Creation
 */
 
-UENUM()
-enum FPalleteFileType {
-	JASC,
-	GIMP,
-	PaintNET,
-	ASEF,
-	HEX,
-};
-
-UENUM(BlueprintType)
-enum EColorSearchType {
-	ClosestOffset = 4,
-	ClosestLine = 3,
-	ClosestX = 0,
-	ClosestY = 1,
-	ClosestZ = 2,
-};
-
-UENUM(BlueprintType)
-enum EColorSpace {
-	RGB,
-	HSV,
-	XYZ,
-	CIELUV,
-};
-
 //Color space structs
 USTRUCT(BlueprintType)
 struct FColorCIELUV {
@@ -81,24 +55,6 @@ struct FColorXYZ {
 	FColorXYZ(float X, float Y, float Z) :X(X), Y(Y), Z(Z) {};
 	FColorXYZ(FVector value) :X(value.X), Y(value.Y), Z(value.Z) {};
 };
-
-
-//Unused
-//USTRUCT(BlueprintType)
-//struct FColorHSV {
-//	GENERATED_BODY()
-//	UPROPERTY(BlueprintReadWrite)
-//	float H;
-//	UPROPERTY(BlueprintReadWrite)
-//	float S;
-//	UPROPERTY(BlueprintReadWrite)
-//	float V;
-//
-//	FColorHSV() = default;
-//	FColorHSV(float H, float S, float V) :H(H), S(S), V(V) {};
-//	FColorHSV(FVector value) :H(value.X), S(value.Y), V(value.Z) {};
-//	FColorHSV(FLinearColor HSV_Linear) :H(HSV_Linear.R), S(HSV_Linear.G), V(HSV_Linear.B) {}; //TODO: Need to test this one
-//};
 
 UCLASS()
 class UVVAD_ColorUtilsAndWidgetsBPLibrary : public UBlueprintFunctionLibrary {
