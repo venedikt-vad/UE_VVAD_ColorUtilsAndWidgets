@@ -32,7 +32,7 @@ or
 ## Supported Engine Versions
 
 - Unreal Engine 4.27 (Vite)
--   
+- Unreal Engine 5.5
 
 ## Screenshots
 <img src="Resources/Screenshots/WG_HueCircle.png" width=30%> <img src="Resources/Screenshots/WG_ColorTriangle.png" width=30%>
