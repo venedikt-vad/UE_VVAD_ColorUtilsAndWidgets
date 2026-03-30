@@ -96,8 +96,12 @@ void UColorGradientSlider::SetColorValue(const FLinearColor& NewValue) {
 	if (v.LinearRGBToHSV().G != 0 && v.LinearRGBToHSV().B != 0) {
 		CurrentValueHSV.R = v.R;
 	}
-	CurrentValueHSV.G = v.G;
-	CurrentValueHSV.B = v.B;
+	if (v.LinearRGBToHSV().B != 0) {
+		CurrentValueHSV.G = v.G;
+	}
+	if (v.LinearRGBToHSV().G != 0 && v.LinearRGBToHSV().G != 1) {
+		CurrentValueHSV.B = v.B;
+	}
 
 
 	UpdateMatInst();
@@ -108,6 +112,9 @@ FLinearColor UColorGradientSlider::GetColorValueHSV() const {
 }
 
 void UColorGradientSlider::SetColorValueHSV(const FLinearColor& NewValueHSV) {
+	if (CurrentValueHSV == NewValueHSV) return;
+	
+	CurrentValueHSV = NewValueHSV;
 	switch (SliderType) {
 	case EColorSliderType::Hue:
 		Super::SetValue(NewValueHSV.R / 360);
@@ -132,8 +139,6 @@ void UColorGradientSlider::SetColorValueHSV(const FLinearColor& NewValueHSV) {
 	default:
 		break;
 	}
-
-	CurrentValueHSV = NewValueHSV;
 
 	UpdateMatInst();
 }
@@ -167,11 +172,11 @@ void UColorGradientSlider::HandleSliderValueChanged(float InValue) {
 	case EColorSliderType::Value:
 		NewValue.B = GetValue();
 		break;
+
 	case EColorSliderType::Red:
 		NewValue = NewValue.HSVToLinearRGB();
 		NewValue.R = GetValue();
 		NewValue = NewValue.LinearRGBToHSV();
-
 		break;
 	case EColorSliderType::Green:
 		NewValue = NewValue.HSVToLinearRGB();
@@ -183,6 +188,7 @@ void UColorGradientSlider::HandleSliderValueChanged(float InValue) {
 		NewValue.B = GetValue();
 		NewValue = NewValue.LinearRGBToHSV();
 		break;
+
 	case EColorSliderType::Custom:
 		NewValue = colorCurve->GetLinearColorValue(InValue).LinearRGBToHSV();
 		break;
