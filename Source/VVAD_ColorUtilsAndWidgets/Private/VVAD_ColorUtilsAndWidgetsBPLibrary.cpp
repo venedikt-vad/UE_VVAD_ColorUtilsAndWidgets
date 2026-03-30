@@ -152,7 +152,7 @@ UTexture2D* UVVAD_ColorUtilsAndWidgetsBPLibrary::CurveLinearColor_CreateTexture(
 		Texture->SRGB = bOutputSRGB;
 	}
 
-	FTexture2DMipMap& Mip = Texture->PlatformData->Mips[0];   // UE5 Texture->GetPlatformData()->Mips[0]; 
+	FTexture2DMipMap& Mip = Texture->GetPlatformData()->Mips[0];   // UE4 Texture->PlatformData->Mips[0]
 	void* RawData = Mip.BulkData.Lock(LOCK_READ_WRITE);
 	FColor* Pixels = static_cast<FColor*>(RawData);
 
