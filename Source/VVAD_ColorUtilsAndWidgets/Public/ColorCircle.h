@@ -39,14 +39,14 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnCircleColorChangedBP OnColorChanged;
 
-	UFUNCTION(BlueprintCallable) void SetColor(FLinearColor NewColor);
-	UFUNCTION(BlueprintCallable) void SetColorHSV(FLinearColor NewColorHSV);
+	UFUNCTION(BlueprintCallable, Category = "ColorValue") void SetColor(FLinearColor NewColor);
+	UFUNCTION(BlueprintCallable, Category = "ColorValue") void SetColorHSV(FLinearColor NewColorHSV);
 	
-	UFUNCTION(BlueprintCallable) FLinearColor GetColor();
-	UFUNCTION(BlueprintCallable) FLinearColor GetColorHSV();
+	UFUNCTION(BlueprintCallable, Category = "ColorValue") FLinearColor GetColor();
+	UFUNCTION(BlueprintCallable, Category = "ColorValue") FLinearColor GetColorHSV();
 
-	UFUNCTION(BlueprintCallable) void SetXY(FVector2D newValue);
-	UFUNCTION(BlueprintCallable) FVector2D GetXY() const { return CurrentPos; }
+	UFUNCTION(BlueprintCallable, Category = "ColorValue|RawValue") void SetXY(FVector2D newValue);
+	UFUNCTION(BlueprintCallable, Category = "ColorValue|RawValue") FVector2D GetXY() const { return CurrentPos; }
 
 protected:
 	virtual TSharedRef<SWidget> RebuildWidget() override;

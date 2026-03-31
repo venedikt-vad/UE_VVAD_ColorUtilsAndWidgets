@@ -56,14 +56,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance|Thumb")
 	FSlateBrush DisabledThumb;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "ColorValue")
 	FLinearColor GetColorValue() const;
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "ColorValue")
 	void SetColorValue(const FLinearColor& NewValue);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "ColorValue")
 	FLinearColor GetColorValueHSV() const;
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "ColorValue")
 	void SetColorValueHSV(const FLinearColor& NewValueHSV);
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")

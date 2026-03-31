@@ -29,11 +29,11 @@
 USTRUCT(BlueprintType)
 struct FColorCIELUV {
 	GENERATED_BODY()
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "Color|CIELUV")
 	float L;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "Color|CIELUV")
 	float u;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "Color|CIELUV")
 	float v;
 
 	FColorCIELUV() = default;
@@ -44,11 +44,11 @@ struct FColorCIELUV {
 USTRUCT(BlueprintType)
 struct FColorXYZ {
 	GENERATED_BODY()
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "Color|XYZ")
 	float X;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "Color|XYZ")
 	float Y;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "Color|XYZ")
 	float Z;
 
 	FColorXYZ() = default;
