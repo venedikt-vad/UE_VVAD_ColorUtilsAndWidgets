@@ -43,15 +43,15 @@ TSharedRef<SWidget> UColorTriangle::RebuildWidget() {
 				NewColor.B = pow(1.f - FMath::Clamp(c.Y, 0.f, 1.f), 3.f);
 			}
 
-			CurrentValueHSV = NewColor;
-			KnobColorUpdate();
+			SetColorHSV(NewColor);
+			//KnobColorUpdate();
 			OnColorChanged.Broadcast(NewColor);
 
 		}))
 		.OnRingChanged(FOnRingChangedNative::CreateLambda([this](float Angle){
 			FLinearColor NewColor = CurrentValueHSV;
 			NewColor.R = FMath::Fmod(Angle - HueOffset + 360.0f, 360.0f);
-			CurrentValueHSV = NewColor;
+			SetColorHSV(NewColor);
 			OnColorChanged.Broadcast(NewColor);
 		}));
 

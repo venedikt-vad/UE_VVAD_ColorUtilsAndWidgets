@@ -146,11 +146,13 @@ private:
 		FVector2D newXY;
 		newXY = (ClampToCircle(FVector2D(Local.X / Size.X, 1.f - (Local.Y / Size.Y))) - FVector2D(.5, .5)) * 2.f;
 		
+
 		if (bIsCenterInteraction) {
 			OnXYChanged.ExecuteIfBound(newXY);
 		} else {
 			float angle = 360.0f -FMath::RadiansToDegrees(FMath::Atan2(newXY.Y, newXY.X));
 			angle = FMath::Fmod(angle + 360.0f, 360.0f);
+
 			OnRingChanged.ExecuteIfBound(angle);
 		}
 	}
