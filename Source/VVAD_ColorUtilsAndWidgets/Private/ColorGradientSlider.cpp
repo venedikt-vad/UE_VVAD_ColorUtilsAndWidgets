@@ -4,6 +4,8 @@
 #include "ColorGradientSlider.h"
 #include "VVAD_ColorUtilsAndWidgetsBPLibrary.h"
 #include "ColorWidgetHelpers.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Materials/MaterialInterface.h"
 
 
 UColorGradientSlider::UColorGradientSlider(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {

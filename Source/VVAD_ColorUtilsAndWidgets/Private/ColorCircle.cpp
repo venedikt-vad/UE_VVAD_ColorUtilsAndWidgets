@@ -1,6 +1,8 @@
 #include "ColorCircle.h"
 #include "SColorSquare.h"
 #include "ColorWidgetHelpers.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Materials/MaterialInterface.h"
 
 UColorCircle::UColorCircle(const FObjectInitializer& ObjectInitializer) {
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> HS_MatFinder(

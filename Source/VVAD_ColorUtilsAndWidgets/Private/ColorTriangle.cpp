@@ -1,6 +1,8 @@
 #include "ColorTriangle.h"
 #include "SColorTriangle.h"
 #include "ColorWidgetHelpers.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Materials/MaterialInterface.h"
 
 UColorTriangle::UColorTriangle(const FObjectInitializer& ObjectInitializer) {
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> HS_MatFinder(

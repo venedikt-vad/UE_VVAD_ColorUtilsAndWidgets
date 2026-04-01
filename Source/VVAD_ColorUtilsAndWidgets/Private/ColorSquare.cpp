@@ -1,6 +1,8 @@
 #include "ColorSquare.h"
 #include "SColorSquare.h"
 #include "ColorWidgetHelpers.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Materials/MaterialInterface.h"
 
 UColorSquare::UColorSquare(const FObjectInitializer& ObjectInitializer) {
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> SV_MatFinder(
