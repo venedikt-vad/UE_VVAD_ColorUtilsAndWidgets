@@ -6,7 +6,7 @@
 #include "ColorWidgetHelpers.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Materials/MaterialInterface.h"
-
+#include "Materials/MaterialInstanceDynamic.h"
 
 UColorGradientSlider::UColorGradientSlider(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 	//Load from plugin dir:  
