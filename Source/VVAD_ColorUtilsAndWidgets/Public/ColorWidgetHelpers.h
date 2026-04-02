@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Styling/SlateBrush.h"
+#include "Materials/MaterialInterface.h"
 
 static void ApplyMatBrush(FSlateBrush& Brush, const FVector2D& Size, UMaterialInterface* Mat, FLinearColor Tint = FLinearColor::White) {
 	Brush.SetResourceObject(Mat);

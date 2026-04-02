@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/Slider.h"
+#include "Curves/CurveLinearColor.h"
 #include "ColorGradientSlider.generated.h"
 
 /**

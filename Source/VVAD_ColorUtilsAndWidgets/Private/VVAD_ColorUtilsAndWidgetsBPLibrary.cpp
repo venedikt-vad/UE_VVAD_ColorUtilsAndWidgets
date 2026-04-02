@@ -2,6 +2,8 @@
 
 #include "VVAD_ColorUtilsAndWidgetsBPLibrary.h"
 #include "VVAD_ColorUtilsAndWidgets.h"
+#include "Engine/Texture2D.h"
+#include "TextureResource.h"
 
 UVVAD_ColorUtilsAndWidgetsBPLibrary::UVVAD_ColorUtilsAndWidgetsBPLibrary(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer) {
@@ -144,8 +146,9 @@ UTexture2D* UVVAD_ColorUtilsAndWidgetsBPLibrary::CurveLinearColor_CreateTexture(
 
 	UTexture2D* Texture = UTexture2D::CreateTransient(Width, 1, PF_B8G8R8A8);
 	{
-		Texture->MipGenSettings = TMGS_NoMipmaps;
-		Texture->CompressionSettings = TC_Default;
+		Texture->NeverStream = true;
+		//Texture->MipGenSettings = TMGS_NoMipmaps;
+		//Texture->CompressionSettings = TC_Default;
 		Texture->Filter = TF_Bilinear;
 		Texture->AddressX = TA_Clamp;
 		Texture->AddressY = TA_Clamp;
