@@ -32,6 +32,7 @@ or
 ## Supported Engine Versions
 
 - Unreal Engine 4.27 (Vite)
+- Unreal Engine 5.5
 - Unreal Engine 5.6
 - Unreal Engine 5.7  
 
